@@ -76,6 +76,9 @@ function TypedLetter({ paragraphs, onFinished }) {
   const doneRef = useRef(false)
   const bodyRef = useRef(null)
   const tickRef = useRef(null)
+  // keep the latest callback without letting its identity restart the typing
+  const onFinishedRef = useRef(onFinished)
+  onFinishedRef.current = onFinished
   // auto-follow the writing — but the moment she touches or scrolls the
   // letter herself, hand over full control and never fight her again
   const followRef = useRef(true)
@@ -89,11 +92,12 @@ function TypedLetter({ paragraphs, onFinished }) {
     doneRef.current = true
     setTexts(paragraphs.map((p) => p))
     setDone(true)
-    onFinished()
+    onFinishedRef.current()
   }
 
   useEffect(() => {
-    if (!started) return
+    // never restart once the letter has been fully written
+    if (!started || doneRef.current) return
     // split into code points so emoji are never sliced in half
     const chars = paragraphs.map((p) => Array.from(p))
     let p = 0
@@ -104,7 +108,7 @@ function TypedLetter({ paragraphs, onFinished }) {
         if (!doneRef.current) {
           doneRef.current = true
           setDone(true)
-          onFinished()
+          onFinishedRef.current()
         }
         return
       }
@@ -123,7 +127,7 @@ function TypedLetter({ paragraphs, onFinished }) {
       }
     }, 48)
     return () => clearInterval(tickRef.current)
-  }, [started, paragraphs, onFinished])
+  }, [started, paragraphs])
 
   return (
     <div
