@@ -107,10 +107,11 @@ function TypedLetter({ paragraphs, onFinished }) {
         p += 1
         c = 0
       }
-      if (followRef.current) {
-        bodyRef.current?.scrollTo({ top: bodyRef.current.scrollHeight })
+      const el = bodyRef.current
+      if (followRef.current && el && el.scrollHeight - el.scrollTop - el.clientHeight > 4) {
+        el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' })
       }
-    }, 26)
+    }, 48)
     return () => clearInterval(tick)
   }, [paragraphs, onFinished])
 

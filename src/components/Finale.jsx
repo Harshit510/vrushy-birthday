@@ -109,7 +109,7 @@ const REASONS = [
   'The way you laugh at your own jokes before finishing them',
   'How safe the world feels when you hold my hand',
   'Your heart — the kindest one I know',
-  'The way you scrunch your nose when you concentrate',
+  'The way time slows down when you look at me',
   'How you remember the little things I mention once',
   'Your hugs. Nothing else comes close',
   'The way you dance when you think no one is watching',
@@ -118,7 +118,7 @@ const REASONS = [
   'The way you make ordinary evenings unforgettable',
   'How brave you are, even when you don’t feel it',
   'Your dreams, and how alive you look chasing them',
-  'The way you steal my food and deny it beautifully',
+  'The way my name sounds sweeter when you say it',
   'How you always know what I need before I say it',
   'Your eyes when you talk about what you love',
   'The comfort of just sitting silently beside you',
@@ -137,10 +137,10 @@ function ReasonsShow({ onFinished }) {
 
   useEffect(() => {
     if (idx >= REASONS.length - 1) {
-      const t = setTimeout(onFinished, 4500)
+      const t = setTimeout(onFinished, 5500)
       return () => clearTimeout(t)
     }
-    const t = setTimeout(() => setIdx((i) => i + 1), 4000)
+    const t = setTimeout(() => setIdx((i) => i + 1), 5000)
     return () => clearTimeout(t)
   }, [idx, onFinished])
 

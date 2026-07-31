@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { config } from '../config'
 import HeartsBackground from './HeartsBackground'
 import Confetti from './Confetti'
@@ -24,19 +25,68 @@ function BouncyText({ text, className }) {
     <span className={className}>
       {Array.from(text).map((ch, i) => (
         <span key={i} className="bounce-letter" style={{ animationDelay: `${0.35 + i * 0.07}s` }}>
-          {ch === ' ' ? ' ' : ch}
+          {ch === ' ' ? ' ' : ch}
         </span>
       ))}
     </span>
   )
 }
 
+// Act 1 — a quiet, magical moment before the celebration bursts open
+function HushScreen({ onOpen }) {
+  const stars = Array.from({ length: 18 }, (_, i) => ({
+    id: i,
+    left: `${(i * 53) % 100}%`,
+    top: `${(i * 37) % 92}%`,
+    delay: `${(i * 0.7) % 4}s`,
+    size: `${0.55 + ((i * 7) % 10) / 14}rem`,
+  }))
+  return (
+    <div className="screen hush-screen">
+      <div className="hush-stars" aria-hidden="true">
+        {stars.map((s) => (
+          <span
+            key={s.id}
+            style={{ left: s.left, top: s.top, animationDelay: s.delay, fontSize: s.size }}
+          >
+            ✦
+          </span>
+        ))}
+      </div>
+
+      <p className="hush-psst">psst… {config.name} 🤫</p>
+      <h1 className="hush-line">I built a little world,</h1>
+      <h1 className="hush-line two">just for you.</h1>
+
+      <button className="hush-gift" onClick={onOpen} aria-label="Open your surprise">
+        <span className="hush-ring" aria-hidden="true" />
+        <span className="hush-ring r2" aria-hidden="true" />
+        <span className="hush-heart" aria-hidden="true">💝</span>
+      </button>
+      <p className="hush-hint">tap to unwrap it</p>
+    </div>
+  )
+}
+
 export default function BirthdayIntro({ onDone }) {
+  const [stage, setStage] = useState('hush') // hush → party
+
+  if (stage === 'hush') {
+    return <HushScreen onOpen={() => setStage('party')} />
+  }
+
   return (
     <div className="screen intro-screen">
+      <span className="intro-rays" aria-hidden="true" />
       <HeartsBackground count={14} />
-      <Confetti pieceCount={110} rainMs={999999} />
+      <Confetti pieceCount={130} rainMs={999999} />
       <Bunting />
+
+      <span className="intro-burst" aria-hidden="true">
+        {Array.from({ length: 12 }, (_, i) => (
+          <i key={i} style={{ '--angle': `${i * 30}deg`, animationDelay: `${i * 0.04}s` }}>💖</i>
+        ))}
+      </span>
 
       <div className="intro-center">
         <div className="intro-emoji-row" aria-hidden="true">
@@ -45,14 +95,17 @@ export default function BirthdayIntro({ onDone }) {
           <span>🎈</span>
         </div>
 
-        <h1 className="intro-happy">
+        <h1 className="intro-happy shimmer">
           <BouncyText text="Happy" className="intro-line" />
           <BouncyText text="Birthday" className="intro-line" />
         </h1>
 
-        <p className="intro-name">{config.name} 💖</p>
+        <p className="intro-name">
+          <span className="intro-crown" aria-hidden="true">👑</span>
+          {config.name} 💖
+        </p>
 
-        <p className="intro-tag">A little surprise, made just for you…</p>
+        <p className="intro-tag">Today is all about you, my love — every bit of it…</p>
 
         <button className="pill-btn intro-btn" onClick={onDone}>
           Let&apos;s Celebrate 🎉
