@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { config } from '../config'
 import HeartsBackground from './HeartsBackground'
 
 function Rose({ x, y }) {
@@ -140,24 +141,48 @@ function Butterflies() {
 const FLOWER_WORDS = [
   'my sunshine ☀️',
   'meri jaan ❤️',
-  'prettiest 🌷',
+  'the prettiest 🌷',
   'my peace 🕊️',
-  'forever mine 💍',
   'my whole heart 💝',
   'cutie 🥰',
+  'my angel 😇',
+  'meri duniya 🌍',
+  'my forever 💫',
+  'sweetest soul 🍯',
+  'my dream come true 🌙',
+  'queen of my heart 👑',
+  'my favourite person 🫶',
+  'the reason I smile 😊',
   'my lucky charm ✨',
+  'mine. only mine 😌💘',
 ]
+
+const TAPS_TO_PROPOSE = 5
 
 export default function RoseBouquet({ onDone }) {
   const [floats, setFloats] = useState([])
   const [tapCount, setTapCount] = useState(0)
+  const [proposal, setProposal] = useState('waiting') // waiting → asking → yes
 
   const onFlowerTap = (e, i) => {
+    if (proposal !== 'waiting') return
     const id = `${Date.now()}-${i}-${Math.random()}`
     const text = FLOWER_WORDS[(tapCount + i) % FLOWER_WORDS.length]
     setFloats((f) => [...f.slice(-5), { id, x: e.clientX, y: e.clientY, text }])
-    setTapCount((c) => c + 1)
-    setTimeout(() => setFloats((f) => f.filter((w) => w.id !== id)), 1700)
+    const taps = tapCount + 1
+    setTapCount(taps)
+    setTimeout(() => setFloats((f) => f.filter((w) => w.id !== id)), 2000)
+    if (taps === TAPS_TO_PROPOSE) {
+      setTimeout(() => setProposal('asking'), 900)
+    }
+  }
+
+  const sayYes = () => setProposal('yes')
+
+  // she must meet the love-card before moving on — even if she skips the flowers
+  const handleContinue = () => {
+    if (proposal === 'waiting') setProposal('asking')
+    else onDone()
   }
 
   return (
@@ -167,7 +192,22 @@ export default function RoseBouquet({ onDone }) {
       <Butterflies />
 
       <h1 className="screen-title">A Bouquet Grown From My Heart 🌹🌻</h1>
-      <p className="screen-sub">roses for my love, sunflowers for my sunshine — tap the flowers 😚</p>
+      <p className="screen-sub">
+        {proposal === 'waiting'
+          ? `roses for my love, sunflowers for my sunshine — tap ${TAPS_TO_PROPOSE} flowers 😚`
+          : 'you & me — always ❤️'}
+      </p>
+
+      {/* tap progress: five little petals fill up */}
+      {proposal === 'waiting' && (
+        <div className="tap-petals" aria-hidden="true">
+          {Array.from({ length: TAPS_TO_PROPOSE }, (_, i) => (
+            <span key={i} className={i < tapCount ? 'lit' : ''}>
+              {i < tapCount ? '🌸' : '·'}
+            </span>
+          ))}
+        </div>
+      )}
 
       <div className="bouquet-wrap">
         <div className="bouquet-glow" aria-hidden="true" />
@@ -188,11 +228,47 @@ export default function RoseBouquet({ onDone }) {
         ))}
       </div>
 
-      <div className="bouquet-footer">
-        <button className="pill-btn" onClick={onDone}>
-          Continue →
-        </button>
-      </div>
+      {/* the bouquet proposes 💍 */}
+      {proposal === 'asking' && (
+        <div className="propose-overlay">
+          <div className="propose-card">
+            <span className="propose-ring" aria-hidden="true">❤️</span>
+            <p className="propose-lead">shhh… listen closely. every flower here is whispering…</p>
+            <h2 className="propose-q">
+              Out of every heart in this world, mine chose yours —
+              and it chooses you again, every single day.
+            </h2>
+            <p className="propose-iloveyou">I love you, {config.name} ❤️</p>
+            <div className="propose-btns">
+              <button className="love-reply main" onClick={sayYes}>
+                <span>I love you too</span> 💖
+              </button>
+              <button className="love-reply soft" onClick={sayYes}>
+                <span>I love you more</span> 🥹
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {proposal === 'yes' && (
+        <div className="yes-burst" aria-hidden="true">
+          {Array.from({ length: 14 }, (_, i) => (
+            <i key={i} style={{ '--angle': `${i * 26}deg`, animationDelay: `${i * 0.04}s` }}>💖</i>
+          ))}
+        </div>
+      )}
+
+      {proposal !== 'asking' && (
+        <div className="bouquet-footer">
+          {proposal === 'yes' && (
+            <p className="yes-note">…and she loves me too 💖 — luckiest man alive</p>
+          )}
+          <button className="pill-btn" onClick={handleContinue}>
+            {proposal === 'yes' ? 'Continue, my love →' : 'Continue →'}
+          </button>
+        </div>
+      )}
     </div>
   )
 }

@@ -3310,3 +3310,433 @@ button {
 .wish-overlay.lantern-wish {
   background: rgba(30, 10, 34, 0.55);
 }
+
+/* ── Letter: begin button ─────────────────────────────────── */
+
+.begin-write {
+  display: block;
+  margin: 1.2rem auto 1.6rem;
+  padding: 0.7rem 1.6rem;
+  border-radius: 999px;
+  font-family: 'Caveat', cursive;
+  font-size: 1.3rem;
+  color: #a9452f;
+  background: linear-gradient(180deg, #fdf3dd, #f7e6c4);
+  border: 1.5px dashed #d9b98a;
+  box-shadow: 0 8px 20px rgba(150, 100, 60, 0.18);
+  animation: hint-pulse 2s ease-in-out infinite, sub-in 0.7s 0.9s ease backwards;
+  transition: transform 0.2s ease;
+}
+
+.begin-write:hover {
+  transform: scale(1.05);
+}
+
+/* ── Bouquet: mobile fit ──────────────────────────────────── */
+
+@media (max-width: 520px) {
+  .bouquet-screen .screen-title {
+    font-size: 1.35rem;
+    padding: 0 1.4rem;
+  }
+
+  .bouquet-screen .screen-sub {
+    padding: 0 1.6rem;
+    text-align: center;
+  }
+
+  .bouquet-wrap svg {
+    width: clamp(200px, 58vw, 250px);
+  }
+
+  .bouquet-glow {
+    width: 78vw;
+  }
+
+  /* the tag moves under the bouquet so it never clips off-screen */
+  .bouquet-tag {
+    position: static;
+    display: block;
+    width: fit-content;
+    margin: 0.4rem auto 0;
+    font-size: 1.05rem;
+    transform-origin: center top;
+  }
+
+  .bouquet-footer {
+    padding-bottom: clamp(1.6rem, 5vh, 3rem);
+  }
+
+  .butterfly {
+    font-size: 1.2rem;
+  }
+
+  .butterfly.b2 {
+    font-size: 0.95rem;
+  }
+}
+
+/* ── Hush screen: softer script & mobile alignment ────────── */
+
+.hush-line {
+  font-family: 'Dancing Script', 'Caveat', cursive;
+  font-weight: 500;
+  font-size: clamp(2rem, 7.5vw, 3.3rem);
+  line-height: 1.4;
+  letter-spacing: 0.01em;
+  color: #ffeaf4;
+  text-shadow: 0 2px 18px rgba(255, 160, 200, 0.4);
+}
+
+.hush-line.two {
+  font-weight: 600;
+  font-size: clamp(2.3rem, 8.5vw, 3.8rem);
+  color: #ffc9de;
+  text-shadow: 0 2px 20px rgba(255, 150, 195, 0.5);
+}
+
+@media (max-width: 520px) {
+  .hush-screen {
+    padding: 0 1.2rem;
+  }
+
+  .hush-psst {
+    font-size: 1.45rem;
+  }
+
+  .hush-line {
+    padding: 0 0.4rem;
+  }
+
+  .hush-gift {
+    margin-top: 2.2rem;
+    width: 86px;
+    height: 86px;
+  }
+
+  .hush-heart {
+    font-size: 3.1rem;
+  }
+
+  .hush-hint {
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    text-align: center;
+  }
+}
+
+/* ── Princess theme around her name ───────────────────────── */
+
+.intro-name-dust.princess {
+  margin-top: 0.2rem;
+}
+
+/* the tiara floats down and sparkles gently */
+.tiara {
+  width: clamp(64px, 12vw, 92px);
+  height: auto;
+  margin-bottom: -0.6rem;
+  filter: drop-shadow(0 4px 12px rgba(212, 160, 40, 0.45));
+  animation: tiara-drop 0.9s 1.6s cubic-bezier(0.34, 1.56, 0.64, 1) backwards, tiara-shine 2.8s 2.6s ease-in-out infinite;
+}
+
+@keyframes tiara-drop {
+  from {
+    opacity: 0;
+    transform: translateY(-34px) rotate(8deg) scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes tiara-shine {
+  0%,
+  100% {
+    filter: drop-shadow(0 4px 12px rgba(212, 160, 40, 0.45)) brightness(1);
+  }
+  50% {
+    filter: drop-shadow(0 4px 18px rgba(240, 190, 70, 0.7)) brightness(1.15);
+  }
+}
+
+/* signature flanked by golden flourishes */
+.sig-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  width: min(96vw, 720px);
+}
+
+.sig-row .sig-wrap {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.flourish {
+  flex: 0 0 auto;
+  width: clamp(54px, 9vw, 104px);
+  height: auto;
+  opacity: 0;
+  animation: flourish-in 0.9s ease 3.1s forwards;
+}
+
+.flourish.flip {
+  transform: scaleX(-1);
+}
+
+@keyframes flourish-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* royal caption under the signature */
+.royal-caption {
+  margin-top: -0.9rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: #c99a2e;
+  text-shadow: 0 1px 8px rgba(255, 240, 200, 0.8);
+  animation: sub-in 0.9s 3.5s ease backwards;
+}
+
+@media (max-width: 520px) {
+  .royal-caption {
+    letter-spacing: 0.2em;
+    font-size: 0.72rem;
+    text-align: center;
+  }
+
+  .sig-row {
+    gap: 0;
+  }
+}
+
+/* ── Bouquet: heaven light & the proposal ─────────────────── */
+
+.bouquet-screen {
+  background:
+    radial-gradient(ellipse 60% 40% at 50% 0%, rgba(255, 250, 235, 0.95), transparent 70%),
+    radial-gradient(ellipse 80% 50% at 50% 48%, rgba(255, 240, 222, 0.9), transparent 72%),
+    linear-gradient(180deg, #fdf4ef 0%, #fce4ef 60%, #f9d9ea 100%);
+}
+
+/* five petal slots that fill as she taps */
+.tap-petals {
+  display: flex;
+  gap: 0.7rem;
+  margin-top: 0.7rem;
+  font-size: 1.05rem;
+  color: #d6a5bb;
+  animation: sub-in 0.8s 0.6s ease backwards;
+}
+
+.tap-petals span {
+  width: 1.4rem;
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.tap-petals span.lit {
+  animation: progress-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* love-words: bright pills she can actually read */
+.flower-words span {
+  font-size: clamp(1.35rem, 4.5vw, 1.7rem);
+  color: #b1186b;
+  background: rgba(255, 255, 255, 0.94);
+  padding: 0.3rem 1.1rem;
+  border-radius: 999px;
+  box-shadow: 0 10px 26px rgba(190, 80, 130, 0.35), inset 0 0 0 1.5px rgba(240, 160, 195, 0.5);
+  text-shadow: none;
+}
+
+/* ── proposal overlay ── */
+
+.propose-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(70, 22, 48, 0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  animation: overlay-in 0.6s ease both;
+  padding: 1.2rem;
+}
+
+.propose-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: min(90vw, 420px);
+  padding: 2.2rem 1.6rem 2rem;
+  border-radius: 26px;
+  background: linear-gradient(165deg, #fff8fb, #ffe9f3);
+  box-shadow: 0 30px 70px rgba(60, 15, 40, 0.45), inset 0 0 0 1.5px rgba(240, 160, 195, 0.5);
+  animation: final-in 0.8s 0.2s cubic-bezier(0.34, 1.4, 0.64, 1) backwards;
+}
+
+.propose-ring {
+  font-size: 3.4rem;
+  animation: ring-rise 1.1s cubic-bezier(0.34, 1.56, 0.64, 1) 0.4s backwards, heart-beat 1.6s 1.6s ease-in-out infinite;
+  filter: drop-shadow(0 8px 24px rgba(240, 170, 60, 0.6));
+}
+
+@keyframes ring-rise {
+  0% {
+    opacity: 0;
+    transform: translateY(60px) rotate(-30deg) scale(0.3);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.propose-lead {
+  font-family: 'Caveat', cursive;
+  font-size: clamp(1.25rem, 4vw, 1.5rem);
+  color: #a9647c;
+  margin-top: 1rem;
+  line-height: 1.35;
+  animation: sub-in 0.8s 0.9s ease backwards;
+}
+
+.propose-q {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.6rem, 5.5vw, 2.1rem);
+  color: #a92d55;
+  margin-top: 0.7rem;
+  line-height: 1.3;
+  animation: sub-in 0.9s 1.3s ease backwards;
+}
+
+.propose-btns {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.8rem;
+  margin-top: 1.6rem;
+}
+
+.propose-btns .pill-btn {
+  animation: btn-in 0.6s 1.8s ease backwards;
+}
+
+.propose-btns .pill-btn.alt {
+  background: linear-gradient(135deg, #f59e0b, #ec4899);
+  animation-delay: 2s;
+}
+
+/* she said yes 💍 */
+.yes-burst {
+  position: absolute;
+  left: 50%;
+  top: 44%;
+  z-index: 21;
+  pointer-events: none;
+}
+
+.yes-burst i {
+  position: absolute;
+  font-style: normal;
+  font-size: 1.6rem;
+  animation: burst-fly 1.3s ease-out both;
+}
+
+.yes-note {
+  font-family: 'Caveat', cursive;
+  font-size: clamp(1.4rem, 4.5vw, 1.8rem);
+  color: #b1186b;
+  margin-bottom: 0.9rem;
+  text-align: center;
+  animation: name-in 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+}
+
+.bouquet-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ── Love card: refined quote & reply buttons ─────────────── */
+
+.propose-q {
+  font-size: clamp(1.25rem, 4.2vw, 1.55rem);
+  font-weight: 500;
+  line-height: 1.55;
+  color: #8d3a58;
+}
+
+.propose-iloveyou {
+  font-family: 'Dancing Script', 'Caveat', cursive;
+  font-weight: 600;
+  font-size: clamp(1.9rem, 6.5vw, 2.5rem);
+  margin-top: 0.9rem;
+  background: linear-gradient(90deg, #c2185b, #f06292, #f59e0b);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: name-in 0.9s 1.7s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+}
+
+.propose-btns {
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+  gap: 0.7rem;
+  margin-top: 1.5rem;
+}
+
+.love-reply {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  width: min(100%, 270px);
+  padding: 0.9rem 1.2rem;
+  border-radius: 18px;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.love-reply.main {
+  color: #fff;
+  background: linear-gradient(135deg, #f472a8, #d63384);
+  box-shadow: 0 12px 28px rgba(214, 51, 132, 0.4), inset 0 1.5px 0 rgba(255, 255, 255, 0.4);
+  animation: btn-in 0.6s 2.1s ease backwards;
+}
+
+.love-reply.soft {
+  color: #c2447a;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 8px 20px rgba(190, 90, 130, 0.2), inset 0 0 0 1.5px rgba(236, 95, 156, 0.45);
+  animation: btn-in 0.6s 2.3s ease backwards;
+}
+
+.love-reply:hover {
+  transform: translateY(-2px) scale(1.03);
+}
+
+.love-reply.main:hover {
+  box-shadow: 0 16px 34px rgba(214, 51, 132, 0.55), inset 0 1.5px 0 rgba(255, 255, 255, 0.4);
+}
+
+.love-reply:active {
+  transform: scale(0.97);
+}

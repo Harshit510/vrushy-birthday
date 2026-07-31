@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { config } from '../config'
 import HeartsBackground from './HeartsBackground'
 import Confetti from './Confetti'
-import grandPic from '../assets/pics/shared image (7).jpg'
+import grandPic from '../assets/pics/shared image (17).jpg'
 
 // Real fireworks on canvas — rockets rise and burst into glowing sparks
 function Fireworks() {

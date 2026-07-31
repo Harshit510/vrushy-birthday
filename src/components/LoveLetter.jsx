@@ -72,19 +72,19 @@ function TypedLetter({ paragraphs, onFinished }) {
   const [texts, setTexts] = useState(paragraphs.map(() => ''))
   const [activeP, setActiveP] = useState(0)
   const [done, setDone] = useState(false)
+  const [started, setStarted] = useState(false)
   const doneRef = useRef(false)
   const bodyRef = useRef(null)
-  // follow the typing only while she is at the bottom — if she scrolls up
-  // to re-read, stop yanking the view back down
+  // auto-follow the writing — but the moment she touches or scrolls the
+  // letter herself, hand over full control and never fight her again
   const followRef = useRef(true)
 
-  const onScroll = () => {
-    const el = bodyRef.current
-    if (!el) return
-    followRef.current = el.scrollHeight - el.scrollTop - el.clientHeight < 60
+  const takeControl = () => {
+    followRef.current = false
   }
 
   useEffect(() => {
+    if (!started) return
     // split into code points so emoji are never sliced in half
     const chars = paragraphs.map((p) => Array.from(p))
     let p = 0
@@ -107,24 +107,41 @@ function TypedLetter({ paragraphs, onFinished }) {
         p += 1
         c = 0
       }
+      // direct scroll (no smooth queue) = no jank; only while she hasn't taken over
       const el = bodyRef.current
-      if (followRef.current && el && el.scrollHeight - el.scrollTop - el.clientHeight > 4) {
-        el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' })
+      if (followRef.current && el) {
+        el.scrollTop = el.scrollHeight
       }
     }, 48)
     return () => clearInterval(tick)
-  }, [paragraphs, onFinished])
+  }, [started, paragraphs, onFinished])
 
   return (
-    <div className="letter-card unfold" ref={bodyRef} onScroll={onScroll}>
+    <div
+      className="letter-card unfold"
+      ref={bodyRef}
+      onPointerDown={takeControl}
+      onWheel={takeControl}
+      onTouchMove={takeControl}
+    >
       <span className="letter-pin">♥</span>
       <p className="letter-dear">My dearest {config.name},</p>
-      {texts.map((t, i) => (
-        <p key={i}>
-          {t}
-          {!done && i === activeP && <span className="type-caret" aria-hidden="true" />}
-        </p>
-      ))}
+      {!started && (
+        <button
+          className="begin-write"
+          onPointerDown={(e) => e.stopPropagation()}
+          onClick={() => setStarted(true)}
+        >
+          ✍️ tap to read my words…
+        </button>
+      )}
+      {started &&
+        texts.map((t, i) => (
+          <p key={i}>
+            {t}
+            {!done && i === activeP && <span className="type-caret" aria-hidden="true" />}
+          </p>
+        ))}
       {done && (
         <div className="letter-end">
           <span className="wax-seal" aria-hidden="true">💋</span>

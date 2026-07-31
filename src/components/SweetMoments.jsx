@@ -23,7 +23,22 @@ const NOTES = [
   'I fall for you a little more every single day 🫶',
   'My today, my tomorrow, my always ♾️',
   '25 looks so beautiful on you, my love 👑',
+  'Us. My favourite word in the world 💑',
+  'I could live in this moment forever 🥹',
+  'Look at us — my dream, in a photo 💭💗',
+  'Made for each other. Simple as that 🧿',
+  'And still, my heart skips when I see you 💓',
 ]
+
+// a new order every single time she opens this screen
+function shuffle(arr) {
+  const a = [...arr]
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[a[i], a[j]] = [a[j], a[i]]
+  }
+  return a
+}
 
 function cardTransform({ pos, isTop, drag, flying, isFlying }) {
   if (isFlying) return `translate(${flying.dx}px, ${flying.dy}px) rotate(${flying.dx / 8}deg)`
@@ -38,9 +53,12 @@ export default function SweetMoments({ onDone }) {
   const [flying, setFlying] = useState(null) // {index, dx, dy} card animating out
   const start = useRef(null)
 
-  const cards = photos.length
-    ? photos.map((src, i) => ({ src, caption: NOTES[i % NOTES.length] }))
-    : config.moments
+  // shuffled once per visit — a different order every time she opens it
+  const [cards] = useState(() =>
+    photos.length
+      ? shuffle(photos).map((src, i) => ({ src, caption: NOTES[i % NOTES.length] }))
+      : config.moments,
+  )
 
   const onPointerDown = (e) => {
     start.current = { x: e.clientX, y: e.clientY }

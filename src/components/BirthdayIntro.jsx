@@ -3,6 +3,28 @@ import { config } from '../config'
 import HeartsBackground from './HeartsBackground'
 import Confetti from './Confetti'
 
+// golden flourish swirl framing the signature on each side
+function Flourish({ flip = false }) {
+  return (
+    <svg
+      className={`flourish ${flip ? 'flip' : ''}`}
+      viewBox="0 0 110 40"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <path
+        d="M106 20 C 80 4 62 36 44 22 C 34 14 22 16 16 22 C 11 27 14 32 19 30 C 23 28 21 23 17 24"
+        stroke="#d9a938"
+        strokeWidth="2.4"
+        fill="none"
+        strokeLinecap="round"
+      />
+      <circle cx="106" cy="20" r="2.6" fill="#e77daa" />
+      <circle cx="10" cy="27" r="2" fill="#e77daa" />
+    </svg>
+  )
+}
+
 // Her name signs itself on screen like a live signature, then fills
 // with a glowing pink-gold gradient and a heart pops at the end
 function SignatureName({ text }) {
@@ -133,9 +155,13 @@ export default function BirthdayIntro({ onDone }) {
           <BouncyText text="Birthday" className="intro-line" />
         </h1>
 
-        <div className="intro-name-dust">
-          <span className="intro-crown" aria-hidden="true">👑</span>
-          <SignatureName text={config.name} />
+        <div className="intro-name-dust princess">
+          <div className="sig-row">
+            <Flourish />
+            <SignatureName text={config.name} />
+            <Flourish flip />
+          </div>
+          <p className="royal-caption">✦ the birthday princess ✦</p>
         </div>
 
         <p className="intro-tag">Today is all about you, my love — every bit of it…</p>
