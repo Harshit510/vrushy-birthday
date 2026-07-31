@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "birthday-gift",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "cwd": "D:\\Claude\\birthday-gift",
+      "port": 5173
+    }
+  ]
+}

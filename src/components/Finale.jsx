@@ -1,0 +1,155 @@
+import { useEffect, useRef } from 'react'
+import { config } from '../config'
+import HeartsBackground from './HeartsBackground'
+
+// Lightweight confetti on a full-screen canvas (no dependencies)
+function Confetti() {
+  const canvasRef = useRef(null)
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    const ctx = canvas.getContext('2d')
+    let raf
+    const dpr = window.devicePixelRatio || 1
+
+    const resize = () => {
+      canvas.width = window.innerWidth * dpr
+      canvas.height = window.innerHeight * dpr
+    }
+    resize()
+    window.addEventListener('resize', resize)
+
+    const colors = ['#f48fb1', '#f06292', '#fff176', '#aed581', '#81d4fa', '#ffb74d', '#ce93d8']
+    const pieces = Array.from({ length: 160 }, () => ({
+      x: Math.random() * canvas.width,
+      y: -Math.random() * canvas.height,
+      w: (5 + Math.random() * 6) * dpr,
+      h: (8 + Math.random() * 8) * dpr,
+      color: colors[(Math.random() * colors.length) | 0],
+      vy: (1.4 + Math.random() * 2.4) * dpr,
+      vx: (Math.random() - 0.5) * 1.6 * dpr,
+      rot: Math.random() * Math.PI,
+      vr: (Math.random() - 0.5) * 0.18,
+    }))
+
+    const started = performance.now()
+    const draw = (now) => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      const elapsed = now - started
+      for (const p of pieces) {
+        p.x += p.vx + Math.sin(p.y / 60) * 0.6 * dpr
+        p.y += p.vy
+        p.rot += p.vr
+        if (p.y > canvas.height + 20 && elapsed < 9000) {
+          p.y = -20
+          p.x = Math.random() * canvas.width
+        }
+        ctx.save()
+        ctx.translate(p.x, p.y)
+        ctx.rotate(p.rot)
+        ctx.fillStyle = p.color
+        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h)
+        ctx.restore()
+      }
+      raf = requestAnimationFrame(draw)
+    }
+    raf = requestAnimationFrame(draw)
+
+    return () => {
+      cancelAnimationFrame(raf)
+      window.removeEventListener('resize', resize)
+    }
+  }, [])
+
+  return <canvas ref={canvasRef} className="confetti-canvas" aria-hidden="true" />
+}
+
+// Cute bunny & bear "HBD" card art, like the video's finale sticker
+function HbdArt() {
+  return (
+    <svg viewBox="0 0 220 190" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0" y="0" width="220" height="190" rx="14" fill="#fdf7f8" />
+      {/* HBD lettering */}
+      <text
+        x="110"
+        y="42"
+        textAnchor="middle"
+        fontFamily="Poppins, sans-serif"
+        fontWeight="700"
+        fontSize="30"
+        fill="#e75f8f"
+        stroke="#c94a76"
+        strokeWidth="1"
+      >
+        HBD
+      </text>
+      {['#f6c744', '#8fd6b1', '#b9aee4', '#7ec3ea'].map((c, i) => (
+        <circle key={i} cx={48 + i * 42} cy={i % 2 ? 20 : 54} r="4" fill={c} opacity="0.85" />
+      ))}
+      {/* bunny */}
+      <g transform="translate(58 108)">
+        <ellipse cx="0" cy="42" rx="30" ry="34" fill="#fff" stroke="#e3d7d7" strokeWidth="2" />
+        <ellipse cx="-12" cy="-18" rx="9" ry="26" fill="#fff" stroke="#e3d7d7" strokeWidth="2" />
+        <ellipse cx="12" cy="-18" rx="9" ry="26" fill="#fff" stroke="#e3d7d7" strokeWidth="2" />
+        <ellipse cx="-12" cy="-16" rx="4.5" ry="18" fill="#f8d7dd" />
+        <ellipse cx="12" cy="-16" rx="4.5" ry="18" fill="#f8d7dd" />
+        <circle cx="0" cy="18" r="24" fill="#fff" stroke="#e3d7d7" strokeWidth="2" />
+        <circle cx="-9" cy="14" r="2.6" fill="#463832" />
+        <circle cx="9" cy="14" r="2.6" fill="#463832" />
+        <path d="M-3 22 q 3 3 6 0" stroke="#463832" strokeWidth="2" fill="none" strokeLinecap="round" />
+        {/* cake she holds */}
+        <g transform="translate(0 48)">
+          <rect x="-16" y="-8" width="32" height="16" rx="4" fill="#8a5a44" />
+          <path d="M-16 -8 q 8 -7 16 0 t 16 0 v 5 h -32 z" fill="#fdf3f0" />
+          <circle cx="-8" cy="-12" r="2.4" fill="#e75f5f" />
+          <circle cx="0" cy="-14" r="2.4" fill="#e75f5f" />
+          <circle cx="8" cy="-12" r="2.4" fill="#e75f5f" />
+        </g>
+      </g>
+      {/* bear */}
+      <g transform="translate(152 112)">
+        <circle cx="-20" cy="-14" r="10" fill="#8a5a3b" />
+        <circle cx="20" cy="-14" r="10" fill="#8a5a3b" />
+        <circle cx="-20" cy="-14" r="5" fill="#b98a63" />
+        <circle cx="20" cy="-14" r="5" fill="#b98a63" />
+        <ellipse cx="0" cy="40" rx="30" ry="32" fill="#96633f" />
+        <circle cx="0" cy="6" r="26" fill="#96633f" />
+        <ellipse cx="0" cy="14" rx="12" ry="9" fill="#c9996c" />
+        <circle cx="-9" cy="0" r="2.6" fill="#3a2a1c" />
+        <circle cx="9" cy="0" r="2.6" fill="#3a2a1c" />
+        <ellipse cx="0" cy="11" rx="3.4" ry="2.6" fill="#3a2a1c" />
+        {/* gift he holds */}
+        <g transform="translate(0 46)">
+          <rect x="-14" y="-10" width="28" height="20" rx="3" fill="#f2d349" stroke="#d8b62e" strokeWidth="2" />
+          <line x1="0" y1="-10" x2="0" y2="10" stroke="#e75f8f" strokeWidth="4" />
+          <path d="M0 -10 C -8 -20 -16 -14 -6 -9 M0 -10 C 8 -20 16 -14 6 -9" stroke="#e75f8f" strokeWidth="3" fill="none" />
+        </g>
+      </g>
+      {/* sparkles */}
+      {[[30, 92], [190, 84], [110, 70]].map(([x, y], i) => (
+        <text key={i} x={x} y={y} fontSize="12" textAnchor="middle">✨</text>
+      ))}
+    </svg>
+  )
+}
+
+export default function Finale({ onReplay }) {
+  return (
+    <div className="screen finale-screen">
+      <HeartsBackground count={14} />
+      <Confetti />
+      <div className="hbd-card">
+        <span className="letter-pin">♥</span>
+        <HbdArt />
+      </div>
+      <h1 className="finale-title">{config.finale.title}</h1>
+      <p className="finale-msg">{config.finale.message}</p>
+      <button className="replay-btn" onClick={onReplay}>
+        ↻ Replay
+      </button>
+      <div className="finale-cta">
+        <span style={{ fontSize: '1.6rem' }}>🎂 🎈 🎁</span>
+      </div>
+    </div>
+  )
+}
