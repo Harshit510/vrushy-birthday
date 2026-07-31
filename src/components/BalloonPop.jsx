@@ -87,6 +87,36 @@ function GarlandCluster({ flip = false }) {
   )
 }
 
+// a steady stream of tiny balloons floating up in the background
+const MINI_COLORS = ['#f4a9c4', '#7ec3ea', '#ffd54f', '#8fd6b1', '#b9aee4', '#ffb74d']
+
+function MiniBalloons() {
+  const minis = Array.from({ length: 10 }, (_, i) => ({
+    id: i,
+    left: `${(i * 37 + 4) % 96}%`,
+    delay: `${(i * 1.9) % 11}s`,
+    duration: `${11 + ((i * 4) % 8)}s`,
+    scale: 0.55 + ((i * 13) % 10) / 18,
+    color: MINI_COLORS[i % MINI_COLORS.length],
+  }))
+  return (
+    <div className="mini-balloons" aria-hidden="true">
+      {minis.map((m) => (
+        <span
+          key={m.id}
+          style={{
+            left: m.left,
+            animationDelay: m.delay,
+            animationDuration: m.duration,
+            '--mb-color': m.color,
+            '--mb-scale': m.scale,
+          }}
+        />
+      ))}
+    </div>
+  )
+}
+
 // dreamy pastel bokeh lights drifting behind everything
 function Bokeh() {
   const dots = Array.from({ length: 8 }, (_, i) => ({
@@ -171,6 +201,8 @@ export default function BalloonPop({ onDone }) {
     <div className="screen balloons-screen">
       <HeartsBackground />
       <Bokeh />
+      <MiniBalloons />
+      <span className="sun-glow" aria-hidden="true" />
       {/* dreamy drifting clouds */}
       <div className="clouds-bg" aria-hidden="true">
         <span className="cloud c1" />
@@ -195,7 +227,7 @@ export default function BalloonPop({ onDone }) {
 
       <div className="balloon-grid">
         {config.balloonWords.map((word, i) => (
-          <div className="balloon-cell" key={word + i}>
+          <div className={`balloon-cell drift-${i}`} key={word + i}>
             {states[i] === 'popped' ? (
               <span className="word-badge" style={{ animationDelay: '0.05s' }}>
                 {word}
