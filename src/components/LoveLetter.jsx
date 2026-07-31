@@ -74,6 +74,15 @@ function TypedLetter({ paragraphs, onFinished }) {
   const [done, setDone] = useState(false)
   const doneRef = useRef(false)
   const bodyRef = useRef(null)
+  // follow the typing only while she is at the bottom — if she scrolls up
+  // to re-read, stop yanking the view back down
+  const followRef = useRef(true)
+
+  const onScroll = () => {
+    const el = bodyRef.current
+    if (!el) return
+    followRef.current = el.scrollHeight - el.scrollTop - el.clientHeight < 60
+  }
 
   useEffect(() => {
     // split into code points so emoji are never sliced in half
@@ -98,13 +107,15 @@ function TypedLetter({ paragraphs, onFinished }) {
         p += 1
         c = 0
       }
-      bodyRef.current?.scrollTo({ top: bodyRef.current.scrollHeight })
+      if (followRef.current) {
+        bodyRef.current?.scrollTo({ top: bodyRef.current.scrollHeight })
+      }
     }, 26)
     return () => clearInterval(tick)
   }, [paragraphs, onFinished])
 
   return (
-    <div className="letter-card unfold" ref={bodyRef}>
+    <div className="letter-card unfold" ref={bodyRef} onScroll={onScroll}>
       <span className="letter-pin">♥</span>
       <p className="letter-dear">My dearest {config.name},</p>
       {texts.map((t, i) => (
