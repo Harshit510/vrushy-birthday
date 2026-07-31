@@ -12,6 +12,13 @@ const photos = Object.keys(picModules)
   .filter((path) => !path.includes('(15)')) // duplicate of (10)
   .map((path) => picModules[path])
 
+// warm the browser cache as soon as the app loads, so the photo screen
+// opens with every image already decoded — no flicker on arrival
+for (const src of photos) {
+  const img = new Image()
+  img.src = src
+}
+
 // Little love notes from me to you — one per photo
 const NOTES = [
   'The day I knew my heart was yours 💘',
@@ -176,6 +183,7 @@ export default function SweetMoments({ onDone }) {
         {cards.map((card, i) => {
           if (i < top && flying?.index !== i) return null
           const pos = i - top // 0 = top card
+          if (pos > 2 && flying?.index !== i) return null // only the visible few
           const isTop = pos === 0
           const isFlying = flying?.index === i
 
@@ -193,7 +201,7 @@ export default function SweetMoments({ onDone }) {
             >
               <span className="washi-tape" aria-hidden="true" />
               <span className="photo-count">{Math.min(i + 1, cards.length)} / {cards.length}</span>
-              <img src={card.src} alt={card.caption} draggable="false" />
+              <img src={card.src} alt={card.caption} draggable="false" decoding="async" />
               <figcaption>{card.caption}</figcaption>
               {isTop && (
                 <span className="love-stamp" aria-hidden="true" style={{ opacity: 0 }}>
