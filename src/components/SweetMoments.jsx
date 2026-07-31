@@ -42,16 +42,18 @@ function shuffle(arr) {
 
 function cardTransform({ pos, isTop, drag, flying, isFlying }) {
   if (isFlying) return `translate(${flying.dx}px, ${flying.dy}px) rotate(${flying.dx / 8}deg)`
-  if (isTop && drag) return `translate(${drag.dx}px, ${drag.dy}px) rotate(${drag.dx / 14}deg)`
   return `translate(0px, ${pos * 10}px) rotate(${pos % 2 ? 3 : -2}deg) scale(${1 - pos * 0.04})`
 }
+
+const baseTransform = cardTransform({ pos: 0, flying: null, isFlying: false })
 
 // Swipeable polaroid card stack — drag a card away to reveal the next
 export default function SweetMoments({ onDone }) {
   const [top, setTop] = useState(0) // index of the topmost card
-  const [drag, setDrag] = useState(null) // {dx, dy} while dragging
   const [flying, setFlying] = useState(null) // {index, dx, dy} card animating out
   const start = useRef(null)
+  const topEl = useRef(null) // DOM node being dragged
+  const raf = useRef(0)
 
   // shuffled once per visit — a different order every time she opens it
   const [cards] = useState(() =>
@@ -60,37 +62,60 @@ export default function SweetMoments({ onDone }) {
       : config.moments,
   )
 
+  // Drag moves the card directly on the DOM (rAF-synced, zero re-renders)
+  // so it glides with her finger instead of stuttering through React updates.
   const onPointerDown = (e) => {
-    start.current = { x: e.clientX, y: e.clientY }
-    setDrag({ dx: 0, dy: 0 })
+    start.current = { x: e.clientX, y: e.clientY, dx: 0, dy: 0 }
+    topEl.current = e.currentTarget
+    e.currentTarget.classList.add('dragging')
     e.currentTarget.setPointerCapture(e.pointerId)
   }
 
   const onPointerMove = (e) => {
-    if (!start.current) return
-    setDrag({ dx: e.clientX - start.current.x, dy: e.clientY - start.current.y })
+    const s = start.current
+    if (!s || !topEl.current) return
+    s.dx = e.clientX - s.x
+    s.dy = e.clientY - s.y
+    if (raf.current) return
+    raf.current = requestAnimationFrame(() => {
+      raf.current = 0
+      const el = topEl.current
+      if (!el || !start.current) return
+      const { dx, dy } = start.current
+      el.style.transform = `translate(${dx}px, ${dy}px) rotate(${dx / 14}deg)`
+      const stamp = el.querySelector('.love-stamp')
+      if (stamp) stamp.style.opacity = Math.min(1, Math.hypot(dx, dy) / 110)
+    })
   }
 
   const release = () => {
-    if (!start.current || !drag) return
-    const { dx, dy } = drag
+    const s = start.current
+    const el = topEl.current
     start.current = null
+    topEl.current = null
+    if (raf.current) {
+      cancelAnimationFrame(raf.current)
+      raf.current = 0
+    }
+    if (!s || !el) return
+    el.classList.remove('dragging')
+    const stamp = el.querySelector('.love-stamp')
+    if (stamp) stamp.style.opacity = 0
+    const { dx, dy } = s
     if (Math.hypot(dx, dy) > 90) {
       // throw the card off-screen in the drag direction
       const scale = 3.2
       setFlying({ index: top, dx: dx * scale || 300, dy: dy * scale })
-      setDrag(null)
       setTimeout(() => {
         setFlying(null)
         setTop((t) => t + 1)
       }, 420)
     } else {
-      setDrag(null) // snap back
+      el.style.transform = baseTransform // snap back smoothly via CSS transition
     }
   }
 
   const allSwiped = top >= cards.length
-  const dragDist = drag ? Math.hypot(drag.dx, drag.dy) : 0
 
   // Final view: the whole screen becomes a photo ring around the message
   if (allSwiped) {
@@ -154,12 +179,12 @@ export default function SweetMoments({ onDone }) {
           const isTop = pos === 0
           const isFlying = flying?.index === i
 
-          const transform = cardTransform({ pos, isTop, drag, flying, isFlying })
+          const transform = cardTransform({ pos, flying, isFlying })
 
           return (
             <figure
               key={card.src + i}
-              className={`polaroid ${isTop && drag ? 'dragging' : ''} ${isFlying ? 'flying' : ''}`}
+              className={`polaroid ${isFlying ? 'flying' : ''}`}
               style={{ transform, zIndex: cards.length - pos }}
               onPointerDown={isTop && !flying ? onPointerDown : undefined}
               onPointerMove={isTop && !flying ? onPointerMove : undefined}
@@ -171,11 +196,7 @@ export default function SweetMoments({ onDone }) {
               <img src={card.src} alt={card.caption} draggable="false" />
               <figcaption>{card.caption}</figcaption>
               {isTop && (
-                <span
-                  className="love-stamp"
-                  aria-hidden="true"
-                  style={{ opacity: Math.min(1, dragDist / 110) }}
-                >
+                <span className="love-stamp" aria-hidden="true" style={{ opacity: 0 }}>
                   💖
                 </span>
               )}

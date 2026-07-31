@@ -3740,3 +3740,14 @@ button {
 .love-reply:active {
   transform: scale(0.97);
 }
+
+/* ── Polaroid drag: GPU-smooth ────────────────────────────── */
+
+.polaroid {
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+.polaroid img {
+  transform: translateZ(0);
+}
