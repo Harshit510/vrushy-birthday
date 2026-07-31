@@ -54,16 +54,16 @@ function HushScreen({ onOpen }) {
         ))}
       </div>
 
-      <p className="hush-psst">psst… {config.name} 🤫</p>
-      <h1 className="hush-line">I built a little world,</h1>
-      <h1 className="hush-line two">just for you.</h1>
+      <p className="hush-psst">Hey my love… 💖</p>
+      <h1 className="hush-line">I wrapped up all my love for you</h1>
+      <h1 className="hush-line two">into one little world. It&apos;s yours, {config.name}.</h1>
 
       <button className="hush-gift" onClick={onOpen} aria-label="Open your surprise">
         <span className="hush-ring" aria-hidden="true" />
         <span className="hush-ring r2" aria-hidden="true" />
         <span className="hush-heart" aria-hidden="true">💝</span>
       </button>
-      <p className="hush-hint">tap to unwrap it</p>
+      <p className="hush-hint">tap the heart to open it</p>
     </div>
   )
 }
