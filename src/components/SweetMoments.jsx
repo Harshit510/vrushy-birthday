@@ -12,11 +12,25 @@ const photos = Object.keys(picModules)
   .filter((path) => !path.includes('(15)')) // duplicate of (10)
   .map((path) => picModules[path])
 
-// warm the browser cache as soon as the app loads, so the photo screen
-// opens with every image already decoded — no flicker on arrival
-for (const src of photos) {
-  const img = new Image()
-  img.src = src
+// warm the browser cache in the background so the photo screen opens with
+// images ready — but only AFTER the first screen has painted, so the
+// initial page load stays fast
+function warmPhotoCache() {
+  let i = 0
+  const next = () => {
+    if (i >= photos.length) return
+    const img = new Image()
+    img.onload = next
+    img.onerror = next
+    img.src = photos[i++]
+  }
+  next() // one at a time, never hogging bandwidth
+}
+
+if (document.readyState === 'complete') {
+  setTimeout(warmPhotoCache, 800)
+} else {
+  window.addEventListener('load', () => setTimeout(warmPhotoCache, 800), { once: true })
 }
 
 // Little love notes from me to you — one per photo
