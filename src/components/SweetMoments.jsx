@@ -2,6 +2,35 @@ import { useRef, useState } from 'react'
 import { config } from '../config'
 import HeartsBackground from './HeartsBackground'
 
+// Our real photos — everything in src/assets/pics, sorted by filename
+const picModules = import.meta.glob('../assets/pics/*.{jpg,jpeg,png,webp}', {
+  eager: true,
+  import: 'default',
+})
+const photos = Object.keys(picModules)
+  .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
+  .filter((path) => !path.includes('(15)')) // duplicate of (10)
+  .map((path) => picModules[path])
+
+// Little love notes from me to you — one per photo
+const NOTES = [
+  'The day I knew my heart was yours 💘',
+  'Your smile — my favourite view in the whole world 😍',
+  'Every ordinary day turns golden with you ✨',
+  'My partner in every silly little adventure 🤭',
+  'The prettiest girl, inside and out 🌸',
+  'Home was never a place — it was always you 🏡💕',
+  'I fall for you a little more every single day 🫶',
+  'My today, my tomorrow, my always ♾️',
+  '25 looks so beautiful on you, my love 👑',
+]
+
+function cardTransform({ pos, isTop, drag, flying, isFlying }) {
+  if (isFlying) return `translate(${flying.dx}px, ${flying.dy}px) rotate(${flying.dx / 8}deg)`
+  if (isTop && drag) return `translate(${drag.dx}px, ${drag.dy}px) rotate(${drag.dx / 14}deg)`
+  return `translate(0px, ${pos * 10}px) rotate(${pos % 2 ? 3 : -2}deg) scale(${1 - pos * 0.04})`
+}
+
 // Swipeable polaroid card stack — drag a card away to reveal the next
 export default function SweetMoments({ onDone }) {
   const [top, setTop] = useState(0) // index of the topmost card
@@ -9,7 +38,9 @@ export default function SweetMoments({ onDone }) {
   const [flying, setFlying] = useState(null) // {index, dx, dy} card animating out
   const start = useRef(null)
 
-  const cards = config.moments
+  const cards = photos.length
+    ? photos.map((src, i) => ({ src, caption: NOTES[i % NOTES.length] }))
+    : config.moments
 
   const onPointerDown = (e) => {
     start.current = { x: e.clientX, y: e.clientY }
@@ -41,12 +72,62 @@ export default function SweetMoments({ onDone }) {
   }
 
   const allSwiped = top >= cards.length
+  const dragDist = drag ? Math.hypot(drag.dx, drag.dy) : 0
+
+  // Final view: the whole screen becomes a photo ring around the message
+  if (allSwiped) {
+    const n = Math.max(cards.length, 1)
+    return (
+      <div className="screen moments-screen">
+        <HeartsBackground />
+        <div className="moments-collage">
+          {cards.map((card, i) => {
+            const angle = (i / n) * Math.PI * 2 - Math.PI / 2
+            const left = 50 + 38 * Math.cos(angle)
+            const topPos = 50 + 38 * Math.sin(angle)
+            const rot = i % 2 ? 8 : -8
+            return (
+              <img
+                key={card.src}
+                src={card.src}
+                alt=""
+                className="collage-pic"
+                style={{
+                  left: `${left}%`,
+                  top: `${topPos}%`,
+                  '--rot': `${rot}deg`,
+                  animationDelay: `${0.15 + i * 0.12}s`,
+                }}
+                draggable="false"
+              />
+            )
+          })}
+          <div className="moments-final">
+            <span className="moments-final-heart" aria-hidden="true">💖</span>
+            <h2>Every single one of these moments… is you</h2>
+            <p>
+              To the girl who makes ordinary days feel like celebrations — these aren&apos;t
+              just photos, they&apos;re my favourite treasures.
+            </p>
+            <p>
+              Happy 25th, my {config.name}. My heart was yours in every one of them, and it
+              always will be. 💖
+            </p>
+            <span className="final-sign">— yours, forever</span>
+            <button className="pill-btn final-continue" onClick={onDone}>
+              Continue 💝
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="screen moments-screen">
       <HeartsBackground />
-      <h1 className="screen-title">Some Sweet Moments</h1>
-      <p className="screen-sub">(Swipe the cards)</p>
+      <h1 className="screen-title">Us — My Favourite Moments 💞</h1>
+      <p className="screen-sub">Swipe each memory, my love</p>
 
       <div className="card-stack">
         {cards.map((card, i) => {
@@ -55,13 +136,7 @@ export default function SweetMoments({ onDone }) {
           const isTop = pos === 0
           const isFlying = flying?.index === i
 
-          let transform = `translate(0px, ${pos * 10}px) rotate(${pos % 2 ? 3 : -2}deg) scale(${1 - pos * 0.04})`
-          if (isTop && drag) {
-            transform = `translate(${drag.dx}px, ${drag.dy}px) rotate(${drag.dx / 14}deg)`
-          }
-          if (isFlying) {
-            transform = `translate(${flying.dx}px, ${flying.dy}px) rotate(${flying.dx / 8}deg)`
-          }
+          const transform = cardTransform({ pos, isTop, drag, flying, isFlying })
 
           return (
             <figure
@@ -73,8 +148,19 @@ export default function SweetMoments({ onDone }) {
               onPointerUp={isTop && !flying ? release : undefined}
               onPointerCancel={isTop && !flying ? release : undefined}
             >
+              <span className="washi-tape" aria-hidden="true" />
+              <span className="photo-count">{Math.min(i + 1, cards.length)} / {cards.length}</span>
               <img src={card.src} alt={card.caption} draggable="false" />
               <figcaption>{card.caption}</figcaption>
+              {isTop && (
+                <span
+                  className="love-stamp"
+                  aria-hidden="true"
+                  style={{ opacity: Math.min(1, dragDist / 110) }}
+                >
+                  💖
+                </span>
+              )}
             </figure>
           )
         })}
@@ -89,13 +175,6 @@ export default function SweetMoments({ onDone }) {
         })}
       </div>
 
-      <div className="moments-footer">
-        {(allSwiped || cards.length === 0) && (
-          <button className="pill-btn" onClick={onDone}>
-            Continue
-          </button>
-        )}
-      </div>
     </div>
   )
 }

@@ -5,7 +5,7 @@
 
 export const config = {
   // Name of the birthday person (shown on the cake screen & finale)
-  name: 'AANYA SHARMA',
+  name: 'Vrushy',
 
   // Words revealed as each balloon is popped (4 balloons = 4 words)
   balloonWords: ['You', 'are', 'so', 'special'],
@@ -32,6 +32,6 @@ export const config = {
   // Finale text
   finale: {
     title: 'Lots of love for you ❤️',
-    message: 'Once again, Happy Birthday AANYA SHARMA! Hope you loved your surprise.',
+    message: 'Once again, Happy Birthday Vrushy! Hope you loved your surprise.',
   },
 }

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import BirthdayIntro from './components/BirthdayIntro'
 import BalloonPop from './components/BalloonPop'
 import CandleBlow from './components/CandleBlow'
 import RoseBouquet from './components/RoseBouquet'
@@ -7,7 +8,7 @@ import LoveLetter from './components/LoveLetter'
 import GiftTap from './components/GiftTap'
 import Finale from './components/Finale'
 
-const STEPS = ['balloons', 'candle', 'bouquet', 'moments', 'letter', 'gift', 'finale']
+const STEPS = ['intro', 'balloons', 'candle', 'bouquet', 'moments', 'letter', 'gift', 'finale']
 
 // Little hearts that bloom wherever you tap — everywhere in the app
 function TapHearts() {
@@ -53,6 +54,9 @@ export default function App() {
 
   let content
   switch (STEPS[step]) {
+    case 'intro':
+      content = <BirthdayIntro onDone={next} />
+      break
     case 'balloons':
       content = <BalloonPop key={`b${step}`} onDone={next} />
       break

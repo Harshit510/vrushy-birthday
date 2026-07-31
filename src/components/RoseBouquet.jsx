@@ -1,10 +1,55 @@
 import HeartsBackground from './HeartsBackground'
 
+function Rose({ x, y }) {
+  return (
+    <g>
+      <circle cx={x} cy={y} r="19" fill="#b8232f" />
+      <circle cx={x} cy={y} r="13" fill="#d63a44" />
+      <path
+        d={`M ${x - 8} ${y} a 8 8 0 0 1 16 0 a 5.5 5.5 0 0 1 -11 0`}
+        fill="#9c1b26"
+        opacity="0.85"
+      />
+      <circle cx={x} cy={y} r="4" fill="#8a1620" />
+    </g>
+  )
+}
+
+function Sunflower({ x, y }) {
+  const petals = Array.from({ length: 12 }, (_, i) => i * 30)
+  return (
+    <g>
+      {petals.map((angle) => (
+        <ellipse
+          key={angle}
+          cx={x}
+          cy={y - 14}
+          rx="5"
+          ry="12"
+          fill="#f4b91d"
+          stroke="#dd9c0d"
+          strokeWidth="0.8"
+          transform={`rotate(${angle} ${x} ${y})`}
+        />
+      ))}
+      {/* seed head */}
+      <circle cx={x} cy={y} r="10.5" fill="#7a4a1f" />
+      <circle cx={x} cy={y} r="7" fill="#5d3817" />
+      {[[-3, -2], [3, -3], [0, 2], [-4, 3], [4, 3], [0, -5]].map(([dx, dy], i) => (
+        <circle key={i} cx={x + dx} cy={y + dy} r="1.1" fill="#8a5a2b" />
+      ))}
+    </g>
+  )
+}
+
 function Bouquet() {
-  // watercolor-style red rose bouquet wrapped in cream paper with a red bow
-  const roses = [
-    [95, 78], [130, 62], [165, 78], [78, 108], [113, 95],
-    [148, 95], [182, 108], [96, 128], [131, 118], [164, 128],
+  // watercolor-style mixed bouquet — red roses & sunflowers in cream paper
+  // [x, y, kind] — sunflowers sit at the outer ring, roses fill the heart
+  const flowers = [
+    [130, 58, 'sun'], [88, 74, 'rose'], [172, 74, 'rose'],
+    [64, 104, 'sun'], [113, 90, 'rose'], [148, 92, 'sun'],
+    [196, 104, 'sun'], [92, 122, 'rose'], [131, 116, 'sun'],
+    [168, 124, 'rose'],
   ]
   return (
     <svg viewBox="0 0 260 320" xmlns="http://www.w3.org/2000/svg">
@@ -25,20 +70,11 @@ function Bouquet() {
       ))}
       {/* wrap paper (back) */}
       <path d="M52 96 L130 210 L208 96 L188 70 L72 70 Z" fill="#f3ead8" />
-      {/* roses */}
-      {roses.map(([x, y], i) => (
-        <g key={i}>
-          <circle cx={x} cy={y} r="19" fill="#b8232f" />
-          <circle cx={x} cy={y} r="13" fill="#d63a44" />
-          <path
-            d={`M ${x - 8} ${y} a 8 8 0 0 1 16 0 a 5.5 5.5 0 0 1 -11 0`}
-            fill="#9c1b26"
-            opacity="0.85"
-          />
-          <circle cx={x} cy={y} r="4" fill="#8a1620" />
-        </g>
-      ))}
-      {/* small leaves between roses */}
+      {/* flowers — roses & sunflowers mixed */}
+      {flowers.map(([x, y, kind]) =>
+        kind === 'sun' ? <Sunflower key={`${x}-${y}`} x={x} y={y} /> : <Rose key={`${x}-${y}`} x={x} y={y} />,
+      )}
+      {/* small leaves between flowers */}
       {[[110, 78], [150, 112], [92, 112]].map(([x, y], i) => (
         <ellipse key={i} cx={x} cy={y} rx="6" ry="10" fill="#6d9871" transform={`rotate(40 ${x} ${y})`} />
       ))}
@@ -56,7 +92,7 @@ function Bouquet() {
   )
 }
 
-const PETAL_CHARS = ['🌹', '🌸', '🍃']
+const PETAL_CHARS = ['🌹', '🌻', '🌸', '🍃']
 
 function FallingPetals() {
   const petals = Array.from({ length: 12 }, (_, i) => ({
@@ -64,7 +100,7 @@ function FallingPetals() {
     left: `${(i * 89) % 100}%`,
     delay: `${(i * 1.3) % 8}s`,
     duration: `${6 + ((i * 5) % 5)}s`,
-    char: PETAL_CHARS[i % 3],
+    char: PETAL_CHARS[i % PETAL_CHARS.length],
   }))
   return (
     <div className="petals-bg" aria-hidden="true">
@@ -85,8 +121,8 @@ export default function RoseBouquet({ onDone }) {
     <div className="screen bouquet-screen">
       <HeartsBackground />
       <FallingPetals />
-      <h1 className="screen-title">Your Rose Bouquet 🌹</h1>
-      <p className="screen-sub">Every rose here is a reason I adore you</p>
+      <h1 className="screen-title">Your Rose &amp; Sunflower Bouquet 🌹🌻</h1>
+      <p className="screen-sub">Roses for my love, sunflowers for my sunshine</p>
       <div className="bouquet-wrap">
         <div className="bouquet-float">
           <Bouquet />
