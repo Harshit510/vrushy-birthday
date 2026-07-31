@@ -45,9 +45,13 @@ function Smoke({ x, y, show, delay }) {
   )
 }
 
-function Cake({ blown }) {
+function Cake({ blown, straining }) {
   return (
-    <svg viewBox="0 0 340 330" xmlns="http://www.w3.org/2000/svg">
+    <svg
+      viewBox="0 0 340 330"
+      xmlns="http://www.w3.org/2000/svg"
+      className={straining ? 'straining' : ''}
+    >
       <defs>
         {/* chocolate tiers */}
         <linearGradient id="chocBody" x1="0" y1="0" x2="0" y2="1">
@@ -85,93 +89,94 @@ function Cake({ blown }) {
         </radialGradient>
       </defs>
 
-      {/* plate & shadow */}
-      <ellipse cx="170" cy="308" rx="142" ry="17" fill="#00000012" />
-      <ellipse cx="170" cy="300" rx="132" ry="19" fill="url(#plate)" />
-      <ellipse cx="170" cy="297" rx="114" ry="14" fill="#f8fbfa" />
+      {/* plate & shadow — slides up first */}
+      <g className="asm asm-plate">
+        <ellipse cx="170" cy="308" rx="142" ry="17" fill="#00000012" />
+        <ellipse cx="170" cy="300" rx="132" ry="19" fill="url(#plate)" />
+        <ellipse cx="170" cy="297" rx="114" ry="14" fill="#f8fbfa" />
+      </g>
 
-      {/* ── bottom tier (chocolate) ── */}
-      <path d="M56 216 v 62 q 0 16 114 16 t 114 -16 v -62 z" fill="url(#chocBody)" />
-      <ellipse cx="170" cy="216" rx="114" ry="20" fill="#8a563a" />
-      {/* cream drip over bottom tier */}
-      <path
-        d="M56 216 q 0 -20 114 -20 t 114 20 v 6
-           q -8 16 -19 2 t -19 8 t -19 -6 t -19 9 t -19 -7 t -19 7 t -19 -9 t -19 6 t -19 -8 q -11 14 -19 -2 z"
-        fill="url(#creamDrip)"
-      />
-      {/* gold ribbon on bottom tier */}
-      <path d="M56 268 q 114 22 228 0 v 9 q -114 22 -228 0 z" fill="url(#gold)" opacity="0.95" />
-      {/* rosettes along the bottom tier ledge */}
-      {[92, 131, 170, 209, 248].map((x) => (
-        <g key={x}>
-          <circle cx={x} cy="207" r="8.5" fill="#f6b6cb" />
-          <path
-            d={`M ${x - 5.5} 207 a 5.5 5.5 0 0 1 11 0 a 3.8 3.8 0 0 1 -7.6 0`}
-            fill="#e989ab"
-          />
-          <circle cx={x} cy="207" r="2.2" fill="#d76a92" />
-        </g>
-      ))}
+      {/* ── bottom tier (chocolate) — lands second ── */}
+      <g className="asm asm-bottom">
+        <path d="M56 216 v 62 q 0 16 114 16 t 114 -16 v -62 z" fill="url(#chocBody)" />
+        <ellipse cx="170" cy="216" rx="114" ry="20" fill="#8a563a" />
+        <path
+          d="M56 216 q 0 -20 114 -20 t 114 20 v 6
+             q -8 16 -19 2 t -19 8 t -19 -6 t -19 9 t -19 -7 t -19 7 t -19 -9 t -19 6 t -19 -8 q -11 14 -19 -2 z"
+          fill="url(#creamDrip)"
+        />
+        <path d="M56 268 q 114 22 228 0 v 9 q -114 22 -228 0 z" fill="url(#gold)" opacity="0.95" />
+        {[92, 131, 170, 209, 248].map((x) => (
+          <g key={x}>
+            <circle cx={x} cy="207" r="8.5" fill="#f6b6cb" />
+            <path
+              d={`M ${x - 5.5} 207 a 5.5 5.5 0 0 1 11 0 a 3.8 3.8 0 0 1 -7.6 0`}
+              fill="#e989ab"
+            />
+            <circle cx={x} cy="207" r="2.2" fill="#d76a92" />
+          </g>
+        ))}
+      </g>
 
-      {/* ── top tier (strawberry pink) ── */}
-      <path d="M98 148 v 52 q 0 13 72 13 t 72 -13 v -52 z" fill="url(#pinkBody)" />
-      <ellipse cx="170" cy="148" rx="72" ry="14" fill="#f7bcd0" />
-      {/* cream drip over top tier */}
-      <path
-        d="M98 148 q 0 -15 72 -15 t 72 15 v 5
-           q -7 13 -15 1 t -15 7 t -15 -5 t -13.5 7 t -13.5 -7 t -15 5 t -15 -7 q -8 12 -15 -1 z"
-        fill="url(#creamDrip)"
-      />
-      {/* gold ribbon on top tier */}
-      <path d="M98 189 q 72 15 144 0 v 8 q -72 15 -144 0 z" fill="url(#gold)" opacity="0.95" />
-      {/* strawberries on the top ledge */}
-      {[120, 220].map((x) => (
-        <g key={x}>
-          <path
-            d={`M${x} 132 q 9 0 9 8 q 0 10 -9 13 q -9 -3 -9 -13 q 0 -8 9 -8`}
-            fill="#e2384a"
-          />
-          <path d={`M${x - 5} 133 l 5 -5 l 5 5 l -5 2 z`} fill="#5d9e4c" />
-          {[[-3, 8], [3, 6], [0, 12], [-4, 13], [4, 12]].map(([dx, dy], i) => (
-            <circle key={i} cx={x + dx} cy={132 + dy} r="0.8" fill="#ffd9de" />
-          ))}
-        </g>
-      ))}
-      {/* pearls along top drip */}
-      {[142, 170, 198].map((x) => (
-        <circle key={x} cx={x} cy="140" r="3" fill="#fff" stroke="#e8ddc2" strokeWidth="0.8" />
-      ))}
+      {/* ── top tier (strawberry pink) — lands third ── */}
+      <g className="asm asm-top">
+        <path d="M98 148 v 52 q 0 13 72 13 t 72 -13 v -52 z" fill="url(#pinkBody)" />
+        <ellipse cx="170" cy="148" rx="72" ry="14" fill="#f7bcd0" />
+        <path
+          d="M98 148 q 0 -15 72 -15 t 72 15 v 5
+             q -7 13 -15 1 t -15 7 t -15 -5 t -13.5 7 t -13.5 -7 t -15 5 t -15 -7 q -8 12 -15 -1 z"
+          fill="url(#creamDrip)"
+        />
+        <path d="M98 189 q 72 15 144 0 v 8 q -72 15 -144 0 z" fill="url(#gold)" opacity="0.95" />
+        {[120, 220].map((x) => (
+          <g key={x}>
+            <path
+              d={`M${x} 132 q 9 0 9 8 q 0 10 -9 13 q -9 -3 -9 -13 q 0 -8 9 -8`}
+              fill="#e2384a"
+            />
+            <path d={`M${x - 5} 133 l 5 -5 l 5 5 l -5 2 z`} fill="#5d9e4c" />
+            {[[-3, 8], [3, 6], [0, 12], [-4, 13], [4, 12]].map(([dx, dy], i) => (
+              <circle key={i} cx={x + dx} cy={132 + dy} r="0.8" fill="#ffd9de" />
+            ))}
+          </g>
+        ))}
+        {[142, 170, 198].map((x) => (
+          <circle key={x} cx={x} cy="140" r="3" fill="#fff" stroke="#e8ddc2" strokeWidth="0.8" />
+        ))}
+      </g>
 
-      {/* ── golden "25" number candles ── */}
-      <text
-        x="148"
-        y="126"
-        textAnchor="middle"
-        fontFamily="Poppins, sans-serif"
-        fontWeight="800"
-        fontSize="62"
-        fill="url(#gold)"
-        stroke="#a87f1c"
-        strokeWidth="1.6"
-      >
-        2
-      </text>
-      <text
-        x="196"
-        y="126"
-        textAnchor="middle"
-        fontFamily="Poppins, sans-serif"
-        fontWeight="800"
-        fontSize="62"
-        fill="url(#gold)"
-        stroke="#a87f1c"
-        strokeWidth="1.6"
-      >
-        5
-      </text>
-      {/* wicks */}
-      <line x1="148" y1="78" x2="148" y2="68" stroke="#4a3423" strokeWidth="2.6" strokeLinecap="round" />
-      <line x1="196" y1="78" x2="196" y2="68" stroke="#4a3423" strokeWidth="2.6" strokeLinecap="round" />
+      {/* ── golden "25" number candles — drop in last ── */}
+      <g className="asm asm-candles">
+        <text
+          x="148"
+          y="126"
+          textAnchor="middle"
+          fontFamily="Poppins, sans-serif"
+          fontWeight="800"
+          fontSize="62"
+          fill="url(#gold)"
+          stroke="#a87f1c"
+          strokeWidth="1.6"
+        >
+          2
+        </text>
+        <text
+          x="196"
+          y="126"
+          textAnchor="middle"
+          fontFamily="Poppins, sans-serif"
+          fontWeight="800"
+          fontSize="62"
+          fill="url(#gold)"
+          stroke="#a87f1c"
+          strokeWidth="1.6"
+        >
+          5
+        </text>
+        <line x1="148" y1="78" x2="148" y2="68" stroke="#4a3423" strokeWidth="2.6" strokeLinecap="round" />
+        <line x1="196" y1="78" x2="196" y2="68" stroke="#4a3423" strokeWidth="2.6" strokeLinecap="round" />
+      </g>
+
       {/* ember tips glow briefly after blow */}
       {blown && (
         <>
@@ -180,9 +185,11 @@ function Cake({ blown }) {
         </>
       )}
 
-      {/* flames */}
-      <Flame x={148} y={58} delay="0s" blown={blown} />
-      <Flame x={196} y={58} delay="0.18s" blown={blown} />
+      {/* flames ignite after the candles land */}
+      <g className="flame-ignite">
+        <Flame x={148} y={58} delay="0s" blown={blown} />
+        <Flame x={196} y={58} delay="0.18s" blown={blown} />
+      </g>
 
       {/* smoke */}
       <Smoke x={148} y={64} show={blown} delay="0.45s" />
@@ -191,54 +198,139 @@ function Cake({ blown }) {
   )
 }
 
+// warm golden embers drifting up around the cake
+function Embers() {
+  const embers = Array.from({ length: 9 }, (_, i) => ({
+    id: i,
+    left: `${18 + ((i * 31) % 64)}%`,
+    delay: `${(i * 1.1) % 6}s`,
+    duration: `${5 + ((i * 3) % 4)}s`,
+    size: `${3 + (i % 3) * 2}px`,
+  }))
+  return (
+    <div className="embers" aria-hidden="true">
+      {embers.map((e) => (
+        <span
+          key={e.id}
+          style={{
+            left: e.left,
+            width: e.size,
+            height: e.size,
+            animationDelay: e.delay,
+            animationDuration: e.duration,
+          }}
+        />
+      ))}
+    </div>
+  )
+}
+
+// glowing paper lantern that carries a wish into the sky
+function Lantern({ left, bottom, delay, duration, size = 1, label }) {
+  return (
+    <span
+      className="lantern"
+      style={{
+        left,
+        bottom,
+        animationDelay: delay,
+        animationDuration: duration,
+        '--lsize': size,
+      }}
+    >
+      <i className="lantern-body">{label}</i>
+    </span>
+  )
+}
+
+// the night sky that fades in when the wishes take flight
+function NightSky() {
+  const stars = Array.from({ length: 22 }, (_, i) => ({
+    id: i,
+    left: `${(i * 47) % 100}%`,
+    top: `${(i * 31) % 90}%`,
+    delay: `${(i * 0.5) % 3.5}s`,
+    size: `${0.45 + ((i * 7) % 10) / 16}rem`,
+  }))
+  return (
+    <div className="night-sky" aria-hidden="true">
+      {stars.map((s) => (
+        <span
+          key={s.id}
+          style={{ left: s.left, top: s.top, animationDelay: s.delay, fontSize: s.size }}
+        >
+          ✦
+        </span>
+      ))}
+    </div>
+  )
+}
+
 export default function CandleBlow({ onDone }) {
-  const [blown, setBlown] = useState(false)
+  const [released, setReleased] = useState(false)
   const [wishing, setWishing] = useState(false)
 
-  const blow = () => {
-    if (blown) return
-    setBlown(true)
-    setTimeout(() => setWishing(true), 1400) // let the smoke breathe first
-    setTimeout(onDone, 6200)
+  const release = () => {
+    if (released) return
+    setReleased(true)
+    setTimeout(() => setWishing(true), 3400)
+    setTimeout(onDone, 8200)
   }
 
   return (
-    <div className="screen cake-screen">
+    <div className={`screen cake-screen ${released ? 'night' : ''}`}>
       <HeartsBackground />
-      <h1 className="screen-title">Blow the candles, {config.name}</h1>
+      <div className="cake-vignette" aria-hidden="true" />
+      {released && <NightSky />}
+
+      <h1 className="screen-title">Make a wish, {config.name}</h1>
       <p className="turning-chip">
         <span>✨ Turning 25 today ✨</span>
       </p>
 
       <div className="cake-stage">
-        <div className={`cake-glow ${blown ? 'dim' : ''}`} aria-hidden="true" />
+        <div className={`cake-glow ${released ? 'dim' : ''}`} aria-hidden="true" />
+        <Embers />
         <button
-          className={`cake-btn ${blown ? 'blown' : ''}`}
-          onClick={blow}
-          aria-label="Tap the cake to blow the candles"
+          className={`cake-btn ${released ? 'blown' : ''}`}
+          onClick={release}
+          aria-label="Tap the cake to set your wishes free"
         >
-          <Cake blown={blown} />
+          <Cake blown={released} straining={false} />
         </button>
-        {!blown && (
+
+        {!released && (
           <p className="cake-hint" aria-hidden="true">
-            🌬️ Tap the cake to blow the candles
+            🏮 tap the cake — and set your wishes free
           </p>
+        )}
+
+        {/* the two candle flames become lanterns, and friends join them */}
+        {released && (
+          <div className="lanterns" aria-hidden="true">
+            <Lantern left="43%" bottom="52%" delay="0.5s" duration="7s" size={1.15} label="2" />
+            <Lantern left="55%" bottom="52%" delay="0.8s" duration="7.5s" size={1.15} label="5" />
+            <Lantern left="14%" bottom="-8%" delay="1.6s" duration="9s" size={0.85} label="♥" />
+            <Lantern left="78%" bottom="-10%" delay="2.1s" duration="8.5s" size={0.95} label="♥" />
+            <Lantern left="30%" bottom="-12%" delay="2.8s" duration="10s" size={0.7} label="♥" />
+            <Lantern left="64%" bottom="-9%" delay="3.3s" duration="9.5s" size={0.8} label="♥" />
+          </div>
         )}
       </div>
 
       {wishing && (
-        <div className="wish-overlay">
+        <div className="wish-overlay lantern-wish">
           <span className="wish-stars" aria-hidden="true">
             {['✨', '🌟', '💫', '✨', '⭐', '✨'].map((s, i) => (
               <i key={i} style={{ animationDelay: `${i * 0.35}s` }}>{s}</i>
             ))}
           </span>
           <p>
-            Close your eyes
+            Your wishes are flying
             <br />
-            &amp; make a wish
+            to the sky, my love 🏮
           </p>
-          <p className="wish-sub">Here&apos;s to 25 years of wonderful you, {config.name} 💖</p>
+          <p className="wish-sub">Close your eyes &amp; make one more — for us, {config.name} 💖</p>
         </div>
       )}
     </div>

@@ -134,31 +134,54 @@ const REASONS = [
 
 function ReasonsShow({ onFinished }) {
   const [idx, setIdx] = useState(0)
+  const swipeStart = useRef(null)
 
-  useEffect(() => {
-    if (idx >= REASONS.length - 1) {
-      const t = setTimeout(onFinished, 5500)
-      return () => clearTimeout(t)
-    }
-    const t = setTimeout(() => setIdx((i) => i + 1), 5000)
-    return () => clearTimeout(t)
-  }, [idx, onFinished])
-
-  const advance = () => {
+  const next = () => {
     if (idx < REASONS.length - 1) setIdx((i) => i + 1)
     else onFinished()
   }
+  const prev = () => setIdx((i) => Math.max(0, i - 1))
+
+  // swipe left/right on the card
+  const onPointerDown = (e) => {
+    swipeStart.current = e.clientX
+  }
+  const onPointerUp = (e) => {
+    if (swipeStart.current === null) return
+    const dx = e.clientX - swipeStart.current
+    swipeStart.current = null
+    if (dx < -40) next()
+    else if (dx > 40) prev()
+    else next() // simple tap also advances
+  }
+
+  const isLast = idx === REASONS.length - 1
 
   return (
     <div className="reasons-stage">
       <h1 className="reasons-title">25 years of you…</h1>
       <p className="reasons-sub">…so here are 25 reasons I love you</p>
 
-      <button className="reason-card" onClick={advance} aria-label="Next reason">
+      <button
+        className="reason-card"
+        onPointerDown={onPointerDown}
+        onPointerUp={onPointerUp}
+        aria-label="Next reason"
+      >
         <span className="reason-num">{idx + 1}</span>
         <p key={idx} className="reason-text">{REASONS[idx]}</p>
         <span className="reason-progress">{idx + 1} / 25 💗</span>
       </button>
+
+      <div className="reason-nav">
+        <button className="reason-arrow" onClick={prev} disabled={idx === 0} aria-label="Previous reason">
+          ←
+        </button>
+        <span className="reason-hint">{isLast ? 'one more tap… 🥹' : 'tap or swipe for the next one'}</span>
+        <button className="reason-arrow" onClick={next} aria-label="Next reason">
+          →
+        </button>
+      </div>
 
       <button className="skip-link" onClick={onFinished}>
         skip to the surprise →

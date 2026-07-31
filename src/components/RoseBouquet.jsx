@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import HeartsBackground from './HeartsBackground'
 
 function Rose({ x, y }) {
@@ -42,7 +43,7 @@ function Sunflower({ x, y }) {
   )
 }
 
-function Bouquet() {
+function Bouquet({ onFlowerTap }) {
   // watercolor-style mixed bouquet — red roses & sunflowers in cream paper
   // [x, y, kind] — sunflowers sit at the outer ring, roses fill the heart
   const flowers = [
@@ -66,14 +67,23 @@ function Bouquet() {
           fill="#7fa882"
           opacity="0.75"
           transform={`rotate(${r} ${x} ${y})`}
+          className="bloom-leaf"
+          style={{ animationDelay: `${0.15 + i * 0.1}s` }}
         />
       ))}
       {/* wrap paper (back) */}
       <path d="M52 96 L130 210 L208 96 L188 70 L72 70 Z" fill="#f3ead8" />
-      {/* flowers — roses & sunflowers mixed */}
-      {flowers.map(([x, y, kind]) =>
-        kind === 'sun' ? <Sunflower key={`${x}-${y}`} x={x} y={y} /> : <Rose key={`${x}-${y}`} x={x} y={y} />,
-      )}
+      {/* flowers — each blooms in, and taps release a love-word */}
+      {flowers.map(([x, y, kind], i) => (
+        <g
+          key={`${x}-${y}`}
+          className="bloom-flower"
+          style={{ animationDelay: `${0.45 + i * 0.14}s` }}
+          onClick={(e) => onFlowerTap(e, i)}
+        >
+          {kind === 'sun' ? <Sunflower x={x} y={y} /> : <Rose x={x} y={y} />}
+        </g>
+      ))}
       {/* small leaves between flowers */}
       {[[110, 78], [150, 112], [92, 112]].map(([x, y], i) => (
         <ellipse key={i} cx={x} cy={y} rx="6" ry="10" fill="#6d9871" transform={`rotate(40 ${x} ${y})`} />
@@ -116,18 +126,68 @@ function FallingPetals() {
   )
 }
 
+// Two butterflies fluttering around the bouquet
+function Butterflies() {
+  return (
+    <div className="butterflies" aria-hidden="true">
+      <span className="butterfly b1">🦋</span>
+      <span className="butterfly b2">🦋</span>
+    </div>
+  )
+}
+
+// little love-words that float out of tapped flowers
+const FLOWER_WORDS = [
+  'my sunshine ☀️',
+  'meri jaan ❤️',
+  'prettiest 🌷',
+  'my peace 🕊️',
+  'forever mine 💍',
+  'my whole heart 💝',
+  'cutie 🥰',
+  'my lucky charm ✨',
+]
+
 export default function RoseBouquet({ onDone }) {
+  const [floats, setFloats] = useState([])
+  const [tapCount, setTapCount] = useState(0)
+
+  const onFlowerTap = (e, i) => {
+    const id = `${Date.now()}-${i}-${Math.random()}`
+    const text = FLOWER_WORDS[(tapCount + i) % FLOWER_WORDS.length]
+    setFloats((f) => [...f.slice(-5), { id, x: e.clientX, y: e.clientY, text }])
+    setTapCount((c) => c + 1)
+    setTimeout(() => setFloats((f) => f.filter((w) => w.id !== id)), 1700)
+  }
+
   return (
     <div className="screen bouquet-screen">
       <HeartsBackground />
       <FallingPetals />
-      <h1 className="screen-title">Your Rose &amp; Sunflower Bouquet 🌹🌻</h1>
-      <p className="screen-sub">Roses for my love, sunflowers for my sunshine</p>
+      <Butterflies />
+
+      <h1 className="screen-title">A Bouquet Grown From My Heart 🌹🌻</h1>
+      <p className="screen-sub">roses for my love, sunflowers for my sunshine — tap the flowers 😚</p>
+
       <div className="bouquet-wrap">
+        <div className="bouquet-glow" aria-hidden="true" />
         <div className="bouquet-float">
-          <Bouquet />
+          <Bouquet onFlowerTap={onFlowerTap} />
+          <span className="bouquet-tag">
+            for the prettiest girl 🌷
+          </span>
         </div>
       </div>
+
+      {/* floating love-words released by taps */}
+      <div className="flower-words" aria-hidden="true">
+        {floats.map((w) => (
+          <span key={w.id} style={{ left: w.x, top: w.y }}>
+            {w.text}
+          </span>
+        ))}
+      </div>
+
       <div className="bouquet-footer">
         <button className="pill-btn" onClick={onDone}>
           Continue →

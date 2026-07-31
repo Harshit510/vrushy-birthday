@@ -3,6 +3,39 @@ import { config } from '../config'
 import HeartsBackground from './HeartsBackground'
 import Confetti from './Confetti'
 
+// Her name signs itself on screen like a live signature, then fills
+// with a glowing pink-gold gradient and a heart pops at the end
+function SignatureName({ text }) {
+  return (
+    <span className="sig-wrap">
+      <svg className="sig-name" viewBox="0 0 640 190" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="sigGrad" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stopColor="#d63384" />
+            <stop offset="55%" stopColor="#f06292" />
+            <stop offset="100%" stopColor="#f59e0b" />
+          </linearGradient>
+        </defs>
+        {/* outline draws first, like a pen writing */}
+        <text x="320" y="128" textAnchor="middle" className="sig-stroke">
+          {text}
+        </text>
+        {/* then the ink floods in */}
+        <text x="320" y="128" textAnchor="middle" className="sig-fill">
+          {text}
+        </text>
+      </svg>
+      <span className="sig-heart" aria-hidden="true">💖</span>
+      <span className="sig-sparkles" aria-hidden="true">
+        <i style={{ left: '12%', top: '18%', animationDelay: '3.2s' }}>✨</i>
+        <i style={{ left: '86%', top: '24%', animationDelay: '3.6s' }}>✨</i>
+        <i style={{ left: '22%', top: '78%', animationDelay: '4s' }}>✨</i>
+        <i style={{ left: '76%', top: '74%', animationDelay: '3.4s' }}>✨</i>
+      </span>
+    </span>
+  )
+}
+
 const BUNTING_COLORS = ['#f06292', '#ffd54f', '#81d4fa', '#aed581', '#ce93d8', '#ffb74d']
 
 // A string of party flags across the top of the screen
@@ -56,7 +89,7 @@ function HushScreen({ onOpen }) {
 
       <p className="hush-psst">Hey my love… 💖</p>
       <h1 className="hush-line">I wrapped up all my love for you</h1>
-      <h1 className="hush-line two">into one little world. It&apos;s yours, {config.name}.</h1>
+      <h1 className="hush-line two">into one little world. It&apos;s yours, {config.name} ❤️</h1>
 
       <button className="hush-gift" onClick={onOpen} aria-label="Open your surprise">
         <span className="hush-ring" aria-hidden="true" />
@@ -100,10 +133,10 @@ export default function BirthdayIntro({ onDone }) {
           <BouncyText text="Birthday" className="intro-line" />
         </h1>
 
-        <p className="intro-name">
+        <div className="intro-name-dust">
           <span className="intro-crown" aria-hidden="true">👑</span>
-          {config.name} 💖
-        </p>
+          <SignatureName text={config.name} />
+        </div>
 
         <p className="intro-tag">Today is all about you, my love — every bit of it…</p>
 
