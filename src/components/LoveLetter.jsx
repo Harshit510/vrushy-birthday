@@ -75,12 +75,21 @@ function TypedLetter({ paragraphs, onFinished }) {
   const [started, setStarted] = useState(false)
   const doneRef = useRef(false)
   const bodyRef = useRef(null)
+  const tickRef = useRef(null)
   // auto-follow the writing — but the moment she touches or scrolls the
   // letter herself, hand over full control and never fight her again
   const followRef = useRef(true)
 
-  const takeControl = () => {
+  // she started reading on her own — reveal the whole letter at once
+  // instead of awkwardly writing on beneath her
+  const finishNow = () => {
     followRef.current = false
+    if (doneRef.current || !started) return
+    clearInterval(tickRef.current)
+    doneRef.current = true
+    setTexts(paragraphs.map((p) => p))
+    setDone(true)
+    onFinished()
   }
 
   useEffect(() => {
@@ -89,9 +98,9 @@ function TypedLetter({ paragraphs, onFinished }) {
     const chars = paragraphs.map((p) => Array.from(p))
     let p = 0
     let c = 0
-    const tick = setInterval(() => {
+    tickRef.current = setInterval(() => {
       if (p >= chars.length) {
-        clearInterval(tick)
+        clearInterval(tickRef.current)
         if (!doneRef.current) {
           doneRef.current = true
           setDone(true)
@@ -113,16 +122,15 @@ function TypedLetter({ paragraphs, onFinished }) {
         el.scrollTop = el.scrollHeight
       }
     }, 48)
-    return () => clearInterval(tick)
+    return () => clearInterval(tickRef.current)
   }, [started, paragraphs, onFinished])
 
   return (
     <div
       className="letter-card unfold"
       ref={bodyRef}
-      onPointerDown={takeControl}
-      onWheel={takeControl}
-      onTouchMove={takeControl}
+      onWheel={finishNow}
+      onTouchMove={finishNow}
     >
       <span className="letter-pin">♥</span>
       <p className="letter-dear">My dearest {config.name},</p>
