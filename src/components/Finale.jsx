@@ -133,10 +133,33 @@ function HbdArt() {
   )
 }
 
+function RisingBalloons() {
+  const balloons = Array.from({ length: 7 }, (_, i) => ({
+    id: i,
+    left: `${(i * 61 + 8) % 92}%`,
+    delay: `${(i * 2.1) % 9}s`,
+    duration: `${10 + ((i * 3) % 6)}s`,
+    char: ['🎈', '🩷', '🎈', '💛', '🎈', '💜', '🎈'][i],
+  }))
+  return (
+    <div className="rising-balloons" aria-hidden="true">
+      {balloons.map((b) => (
+        <span
+          key={b.id}
+          style={{ left: b.left, animationDelay: b.delay, animationDuration: b.duration }}
+        >
+          {b.char}
+        </span>
+      ))}
+    </div>
+  )
+}
+
 export default function Finale({ onReplay }) {
   return (
     <div className="screen finale-screen">
       <HeartsBackground count={14} />
+      <RisingBalloons />
       <Confetti />
       <div className="hbd-card">
         <span className="letter-pin">♥</span>

@@ -36,9 +36,23 @@ export default function GiftTap({ onDone }) {
       <HeartsBackground />
       <h1 className="gift-title">One Last Thing…</h1>
       <p className="gift-sub">Tap the gift</p>
-      <button className={`gift-box ${opening ? 'opening' : ''}`} onClick={open} aria-label="Open the gift">
-        <GiftBox />
-      </button>
+      <div className="gift-zone">
+        <span className="gift-sparkles" aria-hidden="true">
+          {['✨', '💖', '✨', '💛', '✨', '💗'].map((s, i) => (
+            <i key={i} style={{ '--angle': `${i * 60}deg`, animationDelay: `${i * 0.25}s` }}>{s}</i>
+          ))}
+        </span>
+        <button className={`gift-box ${opening ? 'opening' : ''}`} onClick={open} aria-label="Open the gift">
+          <GiftBox />
+        </button>
+        {opening && (
+          <span className="gift-burst" aria-hidden="true">
+            {Array.from({ length: 8 }, (_, i) => (
+              <i key={i} style={{ '--angle': `${i * 45}deg` }}>💖</i>
+            ))}
+          </span>
+        )}
+      </div>
     </div>
   )
 }

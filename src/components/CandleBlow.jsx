@@ -23,11 +23,18 @@ function Cake({ blown }) {
       <rect x="143" y="52" width="14" height="66" rx="4" fill="#b03050" />
       <rect x="143" y="52" width="6" height="66" rx="3" fill="#c94a68" />
       <line x1="150" y1="44" x2="150" y2="52" stroke="#3c2a20" strokeWidth="2.5" strokeLinecap="round" />
-      {/* flame */}
+      {/* flame with warm glow halo */}
       <g className={`flame ${blown ? 'out' : ''}`}>
+        <circle className="flame-glow" cx="150" cy="32" r="34" fill="url(#glow)" />
         <ellipse cx="150" cy="32" rx="9" ry="15" fill="#f8a832" />
         <ellipse cx="150" cy="35" rx="5" ry="9" fill="#fde27a" />
       </g>
+      <defs>
+        <radialGradient id="glow">
+          <stop offset="0%" stopColor="#ffd97a" stopOpacity="0.55" />
+          <stop offset="100%" stopColor="#ffd97a" stopOpacity="0" />
+        </radialGradient>
+      </defs>
       {/* smoke after blow */}
       <g className={`smoke ${blown ? 'show' : ''}`}>
         <path
@@ -65,6 +72,11 @@ export default function CandleBlow({ onDone }) {
       )}
       {blown && (
         <div className="wish-overlay">
+          <span className="wish-stars" aria-hidden="true">
+            {['✨', '🌟', '💫', '✨', '⭐', '✨'].map((s, i) => (
+              <i key={i} style={{ animationDelay: `${i * 0.35}s` }}>{s}</i>
+            ))}
+          </span>
           <p>
             Close your eyes
             <br />

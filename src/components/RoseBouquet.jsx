@@ -56,13 +56,41 @@ function Bouquet() {
   )
 }
 
+const PETAL_CHARS = ['🌹', '🌸', '🍃']
+
+function FallingPetals() {
+  const petals = Array.from({ length: 12 }, (_, i) => ({
+    id: i,
+    left: `${(i * 89) % 100}%`,
+    delay: `${(i * 1.3) % 8}s`,
+    duration: `${6 + ((i * 5) % 5)}s`,
+    char: PETAL_CHARS[i % 3],
+  }))
+  return (
+    <div className="petals-bg" aria-hidden="true">
+      {petals.map((p) => (
+        <span
+          key={p.id}
+          style={{ left: p.left, animationDelay: p.delay, animationDuration: p.duration }}
+        >
+          {p.char}
+        </span>
+      ))}
+    </div>
+  )
+}
+
 export default function RoseBouquet({ onDone }) {
   return (
     <div className="screen bouquet-screen">
       <HeartsBackground />
+      <FallingPetals />
       <h1 className="screen-title">Your Rose Bouquet 🌹</h1>
+      <p className="screen-sub">Every rose here is a reason I adore you</p>
       <div className="bouquet-wrap">
-        <Bouquet />
+        <div className="bouquet-float">
+          <Bouquet />
+        </div>
       </div>
       <div className="bouquet-footer">
         <button className="pill-btn" onClick={onDone}>

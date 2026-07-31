@@ -14,12 +14,20 @@ function Envelope({ open, onClick }) {
         <polygon points="10,130 82,78 10,42" fill="#faf6ea" stroke="#cfa84a" strokeWidth="2" />
         <polygon points="190,130 118,78 190,42" fill="#faf6ea" stroke="#cfa84a" strokeWidth="2" />
         <polygon points="10,130 100,66 190,130" fill="#fdfaf0" stroke="#cfa84a" strokeWidth="2.5" />
-        {/* flap */}
+        {/* flap — swings up when opening */}
         <g className="env-flap">
           <polygon points="10,30 100,95 190,30 190,26 10,26" fill="#f6ddda" stroke="#cfa84a" strokeWidth="2.5" />
+          <g className="env-seal">
+            <circle cx="100" cy="72" r="14" fill="#d63384" />
+            <path
+              d="M100 79 q -9 -7 -9 -12 a 4.5 4.5 0 0 1 9 -1.5 a 4.5 4.5 0 0 1 9 1.5 q 0 5 -9 12 z"
+              fill="#fff"
+              opacity="0.92"
+            />
+          </g>
         </g>
       </svg>
-      <span className="env-hint">Tap to open ✉️</span>
+      <span className="env-hint">{open ? 'Opening… 💌' : 'Tap to open ✉️'}</span>
     </button>
   )
 }

@@ -80,6 +80,15 @@ export default function SweetMoments({ onDone }) {
         })}
       </div>
 
+      <div className="stack-dots" aria-hidden="true">
+        {cards.map((card, i) => {
+          let cls = ''
+          if (i < top) cls = 'done'
+          else if (i === top) cls = 'active'
+          return <i key={card.src + i} className={cls} />
+        })}
+      </div>
+
       <div className="moments-footer">
         {(allSwiped || cards.length === 0) && (
           <button className="pill-btn" onClick={onDone}>

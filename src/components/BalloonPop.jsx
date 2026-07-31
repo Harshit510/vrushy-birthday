@@ -73,10 +73,15 @@ export default function BalloonPop({ onDone }) {
     return () => clearTimeout(t)
   }, [states, onDone])
 
+  const popped = states.filter((v) => v === 'popped').length
+
   return (
     <div className="screen">
       <HeartsBackground />
       <h1 className="screen-title pink">Pop all 4 balloons</h1>
+      <p className="screen-sub balloon-count">
+        {popped === 4 ? 'Yay! 🎉' : `${popped} / 4 popped 🎈`}
+      </p>
       <div className="balloon-grid">
         {config.balloonWords.map((word, i) => (
           <div className="balloon-cell" key={word + i}>
