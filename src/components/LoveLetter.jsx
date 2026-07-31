@@ -144,7 +144,7 @@ function TypedLetter({ paragraphs, onFinished }) {
         ))}
       {done && (
         <div className="letter-end">
-          <span className="wax-seal" aria-hidden="true">💋</span>
+          <span className="wax-seal" aria-hidden="true">💝</span>
           <p className="letter-ps">P.S. — You&apos;ll always be my favourite hello. 💕</p>
         </div>
       )}
