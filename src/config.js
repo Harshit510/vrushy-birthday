@@ -21,12 +21,13 @@ export const config = {
   // The letter revealed from the envelope (each string = one paragraph,
   // typed out with a handwriting effect)
   letter: [
-    'Happy Birthday to someone truly special! 🎂',
-    "You are Sweet, Loyal, My rock, and I'm so grateful to have you in my life.",
-    'You bring so much warmth and sweetness into my life. Every moment with you is precious.',
-    'On your special day, I wish you all the happiness, love, and joy that you deserve. May this year bring you countless beautiful moments and wonderful memories.',
-    "Here's to celebrating you today and always! 🎉",
-    'With love and best wishes ❤️',
+    'Happy 25th Birthday, my love 🎂✨',
+    'Twenty-five years ago, the world quietly became a more beautiful place — and then one day you walked into my life, and mine did too.',
+    'You are my calm in every storm, my loudest laugh, my softest place to land. Loving you is the easiest and best thing I have ever done.',
+    'I love the way your eyes light up over the smallest things, the way you care so deeply for everyone around you, and the way even my worst days go quiet the moment I see you.',
+    'This year, I wish you everything you quietly wish for yourself when no one is listening — and I promise to stand beside you for every single one of those dreams, holding your hand through it all.',
+    "Here's to 25 years of wonderful you… and to a forever of us. 🥂",
+    'Yours — always, completely, and then a little more each day ❤️',
   ],
 
   // Finale text
